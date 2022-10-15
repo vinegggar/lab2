@@ -17,6 +17,7 @@ public:
     bool operator <(Lint other);
 
     Lint operator +(Lint other);
+    Lint operator -(Lint other);
 
     friend ostream& operator<<(ostream &out, Lint num);
     friend istream& operator>>(istream &in, Lint& num);
