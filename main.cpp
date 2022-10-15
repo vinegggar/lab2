@@ -4,8 +4,8 @@ using namespace std;
 
 
 int main() {
-    Lint A("45568"),B;
+    Lint A("3548"), B;
     cin>>B;
-    cout<<B<<A;
+    cout<<A + B;
     return 0;
 }
