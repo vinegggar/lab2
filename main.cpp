@@ -4,8 +4,9 @@ using namespace std;
 
 
 int main() {
-    Lint A("13548"), B;
+    Lint A("1385148"), B, C("879899");
     cin>>B;
-    cout <<(A+B)<<(A-B)<<endl;
+    Lint::setMultMode(new NaiveMult);
+    cout<<(A-C)*B;
     return 0;
 }

@@ -2,10 +2,54 @@
 #include <vector>
 
 using namespace std;
+
+class Mult{
+public:
+    virtual vector<int> multiply(vector<int>&, vector<int>&)=0;
+    void carry_res(vector<int>&res){
+        for (int i = 0; i < res.size()-1; ++i) {
+            res[i + 1] += res[i] / 10;
+            res[i] %= 10;
+        }
+    }
+};
+
+class NaiveMult: public Mult{
+public:
+    vector<int> multiply(vector<int>&d1, vector<int>&d2);
+};
+
+class Karatsuba: public Mult{
+public:
+    vector<int>multiply(vector<int>&d1, vector<int>&d2);
+};
+
+
+vector <int> NaiveMult:: multiply(vector<int>&d1,vector<int>&d2){
+    vector <int> res(d1.size()+d2.size());
+    for (int i=0;i<d1.size();++i){
+        for(int j=0;j<d2.size();++j){
+            res[i+j]+=d1[i]*d2[j];
+        }
+    }
+    carry_res(res);
+    return res;
+}
+
+vector<int> Karatsuba::multiply(vector<int> &d1, vector<int> &d2) {
+    vector<int>res(d1.size()+d2.size());
+    if (d1.size()==1 || d2.size()==1){
+        res[0]=d1[0]*d2[0];
+    }
+
+}
+
+
 class Lint{
 private:
     vector <int> digits;
     string val;
+    static Mult* multer;
 public:
     Lint()= default;
     Lint(string val){
@@ -13,16 +57,21 @@ public:
             digits.push_back(val[i]-'0');
         }
     }
-    bool operator==(Lint other);
+
+    bool operator==(Lint& other);
     bool operator !=(Lint other);
-    bool operator>(Lint other);
-    bool operator <=(Lint other);
+    bool operator>(Lint& other);
+    bool operator <=(Lint& other);
     bool operator >=(Lint other);
-    bool operator<(Lint other);
+    bool operator<(Lint& other);
+
+    static void setMultMode(Mult *newMulter){
+        multer = newMulter;
+    }
 
     Lint operator+(Lint other);
     Lint operator-(Lint other);
-
+    Lint operator *(Lint other);
 
     friend ostream& operator<<(ostream &out, Lint num);
     friend istream& operator>>(istream &in, Lint& num);
@@ -31,13 +80,13 @@ public:
 /*
  * comparison operators
  */
-bool Lint:: operator==(Lint other) {return digits == other.digits;}
+bool Lint:: operator==(Lint& other) {return digits == other.digits;}
 
 bool Lint::operator!=(Lint other){return !(operator==(other));}
-bool Lint::operator >(Lint other) {
+bool Lint::operator >(Lint &other) {
     bool res;
     if (digits.size()!=other.digits.size()){
-        res = digits.size()>other.digits.size()?true:false;
+        res = digits.size() > other.digits.size();
     }
     for (int i=int(digits.size())-1;i>=0;--i){
         if (digits[i] > other.digits[i]){
@@ -48,11 +97,11 @@ bool Lint::operator >(Lint other) {
     return res;
 }
 
-bool Lint::operator<=(Lint other) {return not(operator>(other));}
+bool Lint::operator<=(Lint &other) {return not(operator>(other));}
 
 bool Lint:: operator>=(Lint other) {return (operator>(other) or operator==(other));}
 
-bool Lint:: operator<(Lint other) {return not(operator>=(other));}
+bool Lint:: operator<(Lint &other) {return not(operator>=(other));}
 
 /*
  * arithmetic operators
@@ -84,7 +133,16 @@ Lint Lint::operator-(Lint other) {
     }
     return operator+(other);
     }
+    return {};
+}
 
+Lint Lint::operator*(Lint other){
+    Lint res;
+//    if (digits.size()<8 && other.digits.size()<8){
+//        setMultMode(new NaiveMult);
+//    }
+    res.digits=multer->multiply(digits, other.digits);
+    return res;
 }
 
 /*
