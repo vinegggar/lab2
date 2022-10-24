@@ -2,9 +2,9 @@
 #include <vector>
 using namespace std;
 
+
 class Mult{
     virtual vector<int> multiply(vector<int>&, vector<int>&)=0;
-    void carry_res(vector<int>&);
 };
 
 class NaiveMult: public Mult{
@@ -32,7 +32,7 @@ public:
     bool operator <(Lint& other);
 
     static void setMultMode(Mult *newMulter);
-    Lint operator +(Lint other);
+    Lint operator +(Lint &other);
     Lint operator -(Lint other);
     Lint operator *(Lint other);
 
