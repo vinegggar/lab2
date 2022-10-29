@@ -6,26 +6,35 @@ using namespace std;
 
 class Mult{
 public:
-    virtual vector<int> multiply(vector<int>&, vector<int>&)=0;
+    virtual vector<int> multiply(vector<int>, vector<int>)=0;
 };
 
 class NaiveMult: public Mult{
 public:
-    vector<int> multiply(vector<int>&d1, vector<int>&d2) override;
+    vector<int> multiply(vector<int>d1, vector<int>d2) override;
 };
 
 class Karatsuba: public Mult{
 public:
-    vector<int>multiply(vector<int>&d1, vector<int>&d2) override;
+    vector<int>multiply(vector<int>d1, vector<int>d2) override;
+};
+
+class SchonhageStrassen: public Mult{
+public:
+    vector<int>multiply(vector<int>d1, vector<int>d2) override;
 };
 
 
-vector <int> NaiveMult:: multiply(vector<int>&d1,vector<int>&d2){
+vector <int> NaiveMult:: multiply(vector<int>d1,vector<int>d2){
     return naive_multiplication(d1,d2);
 }
 
-vector<int> Karatsuba::multiply(vector<int> &d1, vector<int> &d2) {
+vector<int> Karatsuba::multiply(vector<int> d1, vector<int> d2) {
     return karatsuba_mul(d1,d2);
+}
+
+vector<int> SchonhageStrassen::multiply(vector<int> d1, vector<int> d2) {
+    return fft_mul(d1,d2);
 }
 
 

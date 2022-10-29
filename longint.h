@@ -4,15 +4,19 @@ using namespace std;
 
 
 class Mult{
-    virtual vector<int> multiply(vector<int>&, vector<int>&)=0;
+    virtual vector<int> multiply(vector<int>, vector<int>)=0;
 };
 
 class NaiveMult: public Mult{
-    vector<int> multiply(vector<int>&d1, vector<int>&d2);
+    vector<int> multiply(vector<int>d1, vector<int>d2);
 };
 
 class Karatsuba: public Mult{
-    vector<int>multiply(vector<int>&d1,vector<int>&d2);
+    vector<int>multiply(vector<int>d1,vector<int>d2);
+};
+
+class SchonhageStrassen: public Mult{
+    vector<int>multiply(vector<int>d1,vector<int>d2);
 };
 
 class Lint{
