@@ -2,7 +2,6 @@
 #include <vector>
 using namespace std;
 
-
 class Mult{
     virtual vector<int> multiply(vector<int>, vector<int>)=0;
 };
@@ -16,6 +15,10 @@ class Karatsuba: public Mult{
 };
 
 class SchonhageStrassen: public Mult{
+    vector<int>multiply(vector<int>d1,vector<int>d2);
+};
+
+class ToomCook: public Mult{
     vector<int>multiply(vector<int>d1,vector<int>d2);
 };
 

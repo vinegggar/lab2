@@ -4,18 +4,15 @@ using namespace std;
 
 
 int main() {
-    Lint A("18779777239"), C("75771"), B;
-    cin>>B;
+    Lint A("6779"), C("71898"), B;
+//    cin>>B;
     Lint::setMultMode(new NaiveMult);
-    cout<<A*C;
-    cout<<(A-C)*B;
+    cout<<"Naive: "<<A*C;
     Lint::setMultMode(new Karatsuba);
-    cout<<"Karatsuba"<<endl;
-    cout<<A*C;
-    cout<<(A-C)*B;
+    cout<<"Karatsuba: "<<A*C;
     Lint::setMultMode(new SchonhageStrassen);
-    cout<<"Schonhage-Strassen"<<endl;
-    cout<<A*C;
-    cout<<(A-C)*B;
+    cout<<"Schonhage-Strassen: "<<A*C;
+    Lint::setMultMode(new ToomCook);
+    cout<<"Toom-Cook: "<<A*C;
     return 0;
 }

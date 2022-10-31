@@ -24,9 +24,14 @@ public:
     vector<int>multiply(vector<int>d1, vector<int>d2) override;
 };
 
+class ToomCook: public Mult{
+public:
+    vector<int>multiply(vector<int>d1, vector<int>d2) override;
+};
+
 
 vector <int> NaiveMult:: multiply(vector<int>d1,vector<int>d2){
-    return naive_multiplication(d1,d2);
+    return d1*d2;
 }
 
 vector<int> Karatsuba::multiply(vector<int> d1, vector<int> d2) {
@@ -35,6 +40,10 @@ vector<int> Karatsuba::multiply(vector<int> d1, vector<int> d2) {
 
 vector<int> SchonhageStrassen::multiply(vector<int> d1, vector<int> d2) {
     return fft_mul(d1,d2);
+}
+
+vector<int> ToomCook::multiply(vector<int> d1, vector<int> d2) {
+    return toom_cook_mul(d1,d2);
 }
 
 
@@ -71,11 +80,12 @@ public:
 /*
  * comparison operators
  */
-bool Lint:: operator==(Lint& other) {return digits == other.digits;}
+bool Lint:: operator==(Lint& other) {trim(digits);trim(other.digits);return digits==other.digits;}
 
 bool Lint::operator!=(Lint other){return !(operator==(other));}
 bool Lint::operator >(Lint &other) {
     bool res;
+    trim(digits);trim(other.digits);
     if (digits.size()!=other.digits.size()){
         res = digits.size() > other.digits.size();
     }
@@ -100,17 +110,17 @@ bool Lint:: operator<(Lint &other) {return not(operator>=(other));}
 
 Lint Lint::operator+(Lint& other){
     Lint res;
-    res.digits = sum(digits, other.digits);
+    res.digits = digits+other.digits;
     carry_res(res.digits);
     return res;
 }
 
 Lint Lint::operator-(Lint other) {
-    if (operator>=(other)){
-    for (int & digit : other.digits){
-        digit *= -1;
-    }
-    return operator+(other);
+    Lint res;
+    if (operator>=(other)) {
+        res.digits = digits-other.digits;
+        carry_res(res.digits);
+        return res;
     }
     return {};
 }
@@ -119,6 +129,7 @@ Lint Lint::operator*(Lint other){
     Lint res;
     res.digits = multer->multiply(digits, other.digits);
     carry_res(res.digits);
+    trim(res.digits);
     return res;
 }
 
@@ -126,13 +137,10 @@ Lint Lint::operator*(Lint other){
  * i/o stream operators
  */
 ostream& operator<<(ostream &out, Lint num){
-    int i;
-    for (i=0;i<num.digits.size();++i){
-        if(num.digits[num.digits.size()-1-i]!=0)break;
+    trim(num.digits);
+    for(int i=int(num.digits.size())-1;i>=0;--i){
+        out<<num.digits[i];
     }
-    if (i==num.digits.size())out<<"0";
-    for (int j=int(num.digits.size())-1-i;j>=0;--j){
-        out <<num.digits[j];}
     out<<endl;
     return out;
 }
