@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "vecArithmetic.h"
+#include "decimal.h"
 
 using namespace std;
 
@@ -46,11 +47,9 @@ vector<int> ToomCook::multiply(vector<int> d1, vector<int> d2) {
     return toom_cook_mul(d1,d2);
 }
 
-
 class Lint{
 private:
     vector <int> digits;
-    string val;
     static Mult* multer;
 public:
     Lint()= default;
@@ -60,6 +59,7 @@ public:
         }
     }
 
+    Lint& operator =(const Lint& other);
     bool operator==(Lint& other);
     bool operator !=(Lint other);
     bool operator>(Lint& other);
@@ -72,13 +72,21 @@ public:
     Lint operator+(Lint& other);
     Lint operator-(Lint other);
     Lint operator *(Lint other);
+    void get_inv();
+    Lint operator /(Lint other);
 
     friend ostream& operator<<(ostream &out, Lint num);
     friend istream& operator>>(istream &in, Lint& num);
 };
 
+//implement assignment operator for Lint
+    Lint &Lint::operator=(const Lint &other) {
+        digits = other.digits;
+        return *this;
+    }
+
 /*
- * comparison operators
+ * comparison operators}
  */
 bool Lint:: operator==(Lint& other) {trim(digits);trim(other.digits);return digits==other.digits;}
 
@@ -130,6 +138,16 @@ Lint Lint::operator*(Lint other){
     res.digits = multer->multiply(digits, other.digits);
     carry_res(res.digits);
     trim(res.digits);
+    return res;
+}
+
+void Lint::get_inv() {
+    cout<<Decimal(digits).inverse();
+}
+
+Lint Lint::operator/(Lint other) {
+    Lint res;
+    res.digits = (Decimal(digits)/Decimal(other.digits)).getDigits();
     return res;
 }
 

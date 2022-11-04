@@ -3,4 +3,5 @@ project(lab2)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(lab2 main.cpp longint.cpp longint.h vecArithmetic.cpp vecArithmetic.h)
+add_executable(lab2 main.cpp longint.cpp longint.h vecArithmetic.cpp vecArithmetic.h decimal.cpp decimal.h)
+

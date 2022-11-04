@@ -18,6 +18,10 @@ void carry_res(vector<int>&res){
         res[i+1]+=res[i]>=0? res[i]/10: -((-res[i]+9)/10);
         res[i] = (res[i]+10)%10;//mathematical remainder
     }
+    if (res[res.size()-1]>10){
+        res.push_back(res[res.size()-1]/10);
+        res[res.size()-2]%=10;
+    }
 }
 
 vector<int> operator+(vector<int>d1,vector<int>d2){
@@ -199,4 +203,9 @@ vector<int> toom_cook_mul(vector<int>d1, vector<int>d2){
     }
 
     return res;
+}
+
+vector<int> add_zeroes(vector<int>d, int n){
+    for(int i=0;i<n;++i) d.insert(d.begin(),0);
+    return d;
 }

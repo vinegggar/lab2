@@ -17,3 +17,4 @@ vector<int> fft_mul(vector<int>d1, vector<int>d2);
 void trim(vector<int>&d);
 vector<int> divn(vector<int>d1, int n);
 vector<int> toom_cook_mul(vector<int>d1, vector<int>d2);
+vector<int> add_zeroes(vector<int>d, int n);

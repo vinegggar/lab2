@@ -1,18 +1,21 @@
 #include <iostream>
 #include "longint.h"
+#include "vecArithmetic.h"
 using namespace std;
 
 
 int main() {
-    Lint A("6779"), C("71898"), B;
-//    cin>>B;
+    Lint A("3457874784")
+    , C("256789987"), B, E("4");
     Lint::setMultMode(new NaiveMult);
-    cout<<"Naive: "<<A*C;
+    cout<<"Naive: "<<(A-C)*E;
     Lint::setMultMode(new Karatsuba);
-    cout<<"Karatsuba: "<<A*C;
+    cout<<"Karatsuba: "<<(A-C)*E;
     Lint::setMultMode(new SchonhageStrassen);
-    cout<<"Schonhage-Strassen: "<<A*C;
+    cout<<"Schonhage-Strassen: "<<(A-C)*E;
     Lint::setMultMode(new ToomCook);
-    cout<<"Toom-Cook: "<<A*C;
+    cout<<"Toom-Cook: "<<(A-C)*E;
+    cout<<A/C;
+    C.get_inv();
     return 0;
 }

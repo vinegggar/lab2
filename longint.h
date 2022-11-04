@@ -25,12 +25,12 @@ class ToomCook: public Mult{
 class Lint{
 private:
     vector <int> digits;
-    string val;
     static Mult* multer;
 public:
     Lint();
     Lint(string val);
 
+    Lint& operator =(const Lint& other);
     bool operator ==(Lint& other);
     bool operator !=(Lint other);
     bool operator >(Lint& other);
@@ -42,6 +42,8 @@ public:
     Lint operator +(Lint &other);
     Lint operator -(Lint other);
     Lint operator *(Lint other);
+    void get_inv();
+    Lint operator /(Lint other);
 
     friend ostream& operator<<(ostream &out, Lint num);
     friend istream& operator>>(istream &in, Lint& num);
