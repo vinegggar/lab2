@@ -19,3 +19,4 @@ vector<int> divn(vector<int>d1, int n);
 vector<int> toom_cook_mul(vector<int>d1, vector<int>d2);
 vector<int> add_zeroes(vector<int>d, int n);
 bool operator>(vector<int> d1, vector<int>d2);
+vector<int> to_binary(vector<int>d);

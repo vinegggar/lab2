@@ -48,7 +48,7 @@ public:
     Lint();
     Lint(string val);
     Lint(vector<int> d);
-
+    ~Lint();
     Lint& operator =(const Lint& other);
     bool operator ==(Lint& other);
     bool operator !=(Lint other);
@@ -66,6 +66,8 @@ public:
     void get_inv();
     Lint operator /(Lint other);
     Lint operator %(Lint other);
+    Lint powmod(Lint pow, Lint mod);
+    static Lint generate_random(Lint max);
 
     bool primeCheck();
 

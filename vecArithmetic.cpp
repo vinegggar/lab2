@@ -1,5 +1,6 @@
 #include<vector>
 #include<complex>
+#include <algorithm>
 
 using namespace std;
 
@@ -207,7 +208,7 @@ vector<int> toom_cook_mul(vector<int>d1, vector<int>d2){
     return res;
 }
 
-vector<int> add_zeroes(vector<int>d, int n){
+vector<int> add_zeroes(vector<int>d, int n){ //this function is basically raising to power of 10
     for(int i=0;i<n;++i) d.insert(d.begin(),0);
     return d;
 }
@@ -221,4 +222,14 @@ bool operator>(vector<int> d1, vector<int>d2){
     for(int i=d1.size()-1;i>=0;--i){
         if (d1[i]!=d2[i]) return d1[i]>d2[i];
     }
+    return false;
+}
+
+vector<int> to_binary(vector<int>d){
+    vector<int> res;
+    while(d>vector<int>{0}){
+        res.push_back(d[0]%2);
+        d = divn(d, 2);
+    }
+    return res;
 }

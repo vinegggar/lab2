@@ -20,7 +20,9 @@ public:
         digits=d;
         exp=e;
     }
-
+    ~Decimal(){
+        digits.clear();
+    }
     bool operator==(Decimal other);
 
     Decimal operator*(Decimal other);
@@ -29,7 +31,6 @@ public:
 
     vector<int> getDigits();
     Decimal floor();
-    Decimal operator%(Decimal other);
 
     friend ostream& operator<<(ostream &out, Decimal num);
 };
@@ -61,11 +62,16 @@ Decimal Decimal:: inverse(){
         throw DecimalException();
     }
     Decimal guess({1},-digits.size());
-    for(int i=0;i<10;++i){
-        guess.digits = guess.digits*(add_zeroes({2},-guess.exp)-digits*guess.digits);
+    for(int i=0;i<12;++i){
+        guess.digits = guess.digits*(add_zeroes({2},-guess.exp)- digits*guess.digits);
         carry_res(guess.digits);
         trim(guess.digits);
         guess.exp = guess.exp*2;
+
+        while(guess.digits.size()>128){//optimization because length of number is growing exponentially
+            guess.digits.erase(guess.digits.begin());
+            guess.exp++;
+        }
     }
     return guess;
 }
@@ -99,20 +105,10 @@ Decimal Decimal:: operator/(Decimal other){
     if(other.digits>digits) return Decimal({0});
     else if(digits==other.digits){return Decimal({1});}
     else {
-        res.digits = fft_mul(digits, other.inverse().digits);
+        res.digits = digits*other.inverse().digits;
         carry_res(res.digits);
         trim(res.digits);
         res.exp = exp + other.inverse().exp;
         return res.floor();
     }
-}
-
-Decimal Decimal::operator%(Decimal other) {
-    Decimal res;
-    Decimal div = *this/other;
-    res.digits = digits - (div.digits*other.digits);
-    carry_res(res.digits);
-    trim(res.digits);
-    res.exp = exp;
-    return res;
 }
