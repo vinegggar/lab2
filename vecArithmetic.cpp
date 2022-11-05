@@ -16,12 +16,13 @@ vector<int> operator*(vector<int>d1,vector<int>d2){
 void carry_res(vector<int>&res){
     for (int i = 0; i < res.size()-1; ++i) {
         res[i+1]+=res[i]>=0? res[i]/10: -((-res[i]+9)/10);
-        res[i] = (res[i]+10)%10;//mathematical remainder
+        res[i] = res[i]>=0? res[i]%10: (res[i]%10==0? 0: 10-(-res[i]%10));
     }
     if (res[res.size()-1]>10){
         res.push_back(res[res.size()-1]/10);
         res[res.size()-2]%=10;
     }
+
 }
 
 vector<int> operator+(vector<int>d1,vector<int>d2){
@@ -130,6 +131,7 @@ void trim(vector<int>&d){
     while(d.size()>1 && d.back()==0) d.pop_back();
 }
 
+
 vector<int> fft_mul(vector<int>d1, vector<int>d2){
     int prod_size = d1.size()+d2.size()-1;
     d1.resize(next_pow2(prod_size));d2.resize(next_pow2(prod_size));
@@ -208,4 +210,15 @@ vector<int> toom_cook_mul(vector<int>d1, vector<int>d2){
 vector<int> add_zeroes(vector<int>d, int n){
     for(int i=0;i<n;++i) d.insert(d.begin(),0);
     return d;
+}
+
+bool operator>(vector<int> d1, vector<int>d2){
+    trim(d1);trim(d2);
+    carry_res(d1);carry_res(d2);
+    if (d1.size()!=d2.size()){
+        return d1.size() > d2.size();
+    }
+    for(int i=d1.size()-1;i>=0;--i){
+        if (d1[i]!=d2[i]) return d1[i]>d2[i];
+    }
 }

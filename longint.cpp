@@ -5,6 +5,35 @@
 
 using namespace std;
 
+class PrimalityTest{
+public:
+    virtual bool isPrime(vector<int>)=0;
+};
+
+class Fermat: public PrimalityTest{
+    bool isPrime(vector<int>) override;
+};
+
+class MillerRabin: public PrimalityTest{
+    bool isPrime(vector<int>) override;
+};
+
+class SolovayStrassen: public PrimalityTest{
+    bool isPrime(vector<int>) override;
+};
+
+bool Fermat::isPrime(vector<int> d) {
+    return false;
+}
+
+bool MillerRabin::isPrime(vector<int> d) {
+    return false;
+}
+
+bool SolovayStrassen::isPrime(vector<int> d) {
+    return false;
+}
+
 class Mult{
 public:
     virtual vector<int> multiply(vector<int>, vector<int>)=0;
@@ -51,6 +80,7 @@ class Lint{
 private:
     vector <int> digits;
     static Mult* multer;
+    static PrimalityTest* tester;
 public:
     Lint()= default;
     Lint(string val){
@@ -58,7 +88,9 @@ public:
             digits.push_back(val[i]-'0');
         }
     }
-
+    Lint(vector<int> d){
+        digits = d;
+    }
     Lint& operator =(const Lint& other);
     bool operator==(Lint& other);
     bool operator !=(Lint other);
@@ -68,49 +100,44 @@ public:
     bool operator<(Lint& other);
 
     static void setMultMode(Mult *newMulter);
+    static void setPrimalityTest(PrimalityTest *newTester);
 
     Lint operator+(Lint& other);
     Lint operator-(Lint other);
     Lint operator *(Lint other);
     void get_inv();
     Lint operator /(Lint other);
+    Lint operator %(Lint other);
+
+    bool primeCheck();
 
     friend ostream& operator<<(ostream &out, Lint num);
     friend istream& operator>>(istream &in, Lint& num);
 };
 
-//implement assignment operator for Lint
+/*
+ * assignment operator
+ */
     Lint &Lint::operator=(const Lint &other) {
         digits = other.digits;
         return *this;
     }
 
 /*
- * comparison operators}
+ * comparison operators
  */
 bool Lint:: operator==(Lint& other) {trim(digits);trim(other.digits);return digits==other.digits;}
 
 bool Lint::operator!=(Lint other){return !(operator==(other));}
 bool Lint::operator >(Lint &other) {
-    bool res;
-    trim(digits);trim(other.digits);
-    if (digits.size()!=other.digits.size()){
-        res = digits.size() > other.digits.size();
-    }
-    for (int i=int(digits.size())-1;i>=0;--i){
-        if (digits[i] > other.digits[i]){
-            res = true; break;
-        }
-        res = false;
-    }
-    return res;
+    return digits>other.digits;
 }
 
 bool Lint::operator<=(Lint &other) {return not(operator>(other));}
 
-bool Lint:: operator>=(Lint other) {return (operator>(other) or operator==(other));}
+bool Lint:: operator<(Lint &other) {return other>*this;}
 
-bool Lint:: operator<(Lint &other) {return not(operator>=(other));}
+bool Lint:: operator>=(Lint other) {return !(operator<(other));}
 
 /*
  * arithmetic operators
@@ -149,6 +176,19 @@ Lint Lint::operator/(Lint other) {
     Lint res;
     res.digits = (Decimal(digits)/Decimal(other.digits)).getDigits();
     return res;
+}
+
+Lint Lint::operator%(Lint other) {
+    Lint res;
+    res.digits = (Decimal(digits)%Decimal(other.digits)).getDigits();
+    return res;
+}
+
+/*
+ * primality test
+ */
+bool Lint::primeCheck() {
+    return tester->isPrime(digits);
 }
 
 /*
