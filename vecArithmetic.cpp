@@ -1,6 +1,6 @@
 #include<vector>
 #include<complex>
-#include <algorithm>
+#include <iostream>
 
 using namespace std;
 
@@ -15,6 +15,10 @@ vector<int> operator*(vector<int>d1,vector<int>d2){
 }
 
 void carry_res(vector<int>&res){
+    if (res.size()==0){
+        cout<<"Error: empty vector"<<endl;
+        return;
+    }
     for (int i = 0; i < res.size()-1; ++i) {
         res[i+1]+=res[i]>=0? res[i]/10: -((-res[i]+9)/10);
         res[i] = res[i]>=0? res[i]%10: (res[i]%10==0? 0: 10-(-res[i]%10));
@@ -23,7 +27,6 @@ void carry_res(vector<int>&res){
         res.push_back(res[res.size()-1]/10);
         res[res.size()-2]%=10;
     }
-
 }
 
 vector<int> operator+(vector<int>d1,vector<int>d2){
@@ -213,9 +216,9 @@ vector<int> add_zeroes(vector<int>d, int n){ //this function is basically raisin
     return d;
 }
 
-bool operator>(vector<int> d1, vector<int>d2){
+bool operator>(vector<int> &d1, vector<int>&d2){
+    carry_res(d1), carry_res(d2);
     trim(d1);trim(d2);
-    carry_res(d1);carry_res(d2);
     if (d1.size()!=d2.size()){
         return d1.size() > d2.size();
     }
@@ -233,3 +236,21 @@ vector<int> to_binary(vector<int>d){
     }
     return res;
 }
+
+/*
+ * this function is needed to use miller_rabin primality test
+ */
+vector<vector<int>> factorize(vector<int>n){
+    vector<int> s(n);
+    vector<int> k;
+    vector<int> n_1 = n - vector<int>{1};
+    carry_res(n_1);
+    trim(n_1);
+    while (n_1[0]%2==0){
+        s[0]+=1;//we can do it because the biggest number
+        n_1 = divn(n_1, 2);
+    }
+    k = n_1;
+    return {s, k};
+}
+

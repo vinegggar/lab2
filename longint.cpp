@@ -7,19 +7,19 @@ using namespace std;
 
 class PrimalityTest{
 public:
-    virtual bool isPrime(vector<int>)=0;
+    virtual bool isPrime(vector<int>, int)=0;
 };
 
 class Fermat: public PrimalityTest{
-    bool isPrime(vector<int>) override;
+    bool isPrime(vector<int>, int) override;
 };
 
 class MillerRabin: public PrimalityTest{
-    bool isPrime(vector<int>) override;
+    bool isPrime(vector<int>, int) override;
 };
 
 class SolovayStrassen: public PrimalityTest{
-    bool isPrime(vector<int>) override;
+    bool isPrime(vector<int>,int) override;
 };
 
 
@@ -102,7 +102,7 @@ public:
     static Lint generate_random(Lint max);
     Lint powmod(Lint pow, Lint mod);
 
-    bool primeCheck();
+    bool primeCheck(int iters=1);
 
     friend ostream& operator<<(ostream &out, Lint num);
     friend istream& operator>>(istream &in, Lint& num);
@@ -116,15 +116,15 @@ public:
         return *this;
     }
 
+
 /*
  * comparison operators
  */
 bool Lint:: operator==(Lint& other) {trim(digits);trim(other.digits);return digits==other.digits;}
 
 bool Lint::operator!=(Lint other){return !(*this==other);}
-bool Lint::operator >(Lint &other) {
-    return digits>other.digits;
-}
+
+bool Lint::operator >(Lint &other) {return digits>other.digits;}
 
 bool Lint::operator<=(Lint &other) {return !(*this>other);}
 
@@ -143,6 +143,7 @@ Lint Lint::operator+(Lint& other){
     return res;
 }
 
+int sgn = 1;
 Lint Lint::operator-(Lint other) {
     Lint res;
     if (operator>=(other)) {
@@ -150,12 +151,13 @@ Lint Lint::operator-(Lint other) {
         carry_res(res.digits);
         return res;
     }
-    return {};
+    sgn = -1;
+    return other-*this;
 }
 
 Lint Lint::operator*(Lint other){
     Lint res;
-    res.digits = multer->multiply(digits, other.digits);
+    res.digits = multer->multiply(digits,other.digits);
     carry_res(res.digits);
     trim(res.digits);
     return res;
@@ -172,6 +174,7 @@ Lint Lint::operator/(Lint other) {
 }
 
 Lint Lint::operator%(Lint other) {
+    Lint res;
     if (other.digits==vector<int>{1} or digits==other.digits)return Lint("0");
     if (*this<other) return *this;
     return *this - (other*(*this/other));
@@ -217,29 +220,45 @@ Lint Lint:: generate_random(Lint max) {
 /*
  * primality test
  */
-bool Lint::primeCheck() {
-    return tester->isPrime(digits);
+bool Lint::primeCheck(int iters) {
+    return tester->isPrime(digits,iters);
 }
 
-bool Fermat::isPrime(vector<int> d) {
-    bool res = true;
+bool Fermat::isPrime(vector<int> d, int iters) {
     if (d==vector<int>{1}) return false;
     else if (d==vector<int>{2}) return true;
-
-    Lint rd = Lint::generate_random(Lint(d)-Lint("1"));
-    auto pm = rd.powmod(Lint(d)-Lint("1"), Lint(d));
-
-    if (pm != Lint("1")) {
-        res = false;
+    for(int i=0;i<iters;++i) {
+        Lint rd = Lint::generate_random(Lint(d)-Lint("1"));
+        auto pm = rd.powmod(Lint(d) - Lint("1"), Lint(d));
+        if (pm != Lint("1")) return false;
     }
-    return res;
+    return true;
 }
 
-bool MillerRabin::isPrime(vector<int> d) {
-    return false;
+bool MillerRabin::isPrime(vector<int> d, int iters) {
+    if (d==vector<int>{1}) return false;
+    else if (d==vector<int>{2}||d==vector<int>{3}) return true;
+
+    int s = factorize(d)[0][0];
+    vector<int> k = factorize(d)[1];
+    Lint one = Lint("1");
+    Lint d_1 = Lint(d)-one;
+    for(int i=0;i<iters;++i){
+        Lint rd = Lint::generate_random(d_1);
+        Lint x = rd.powmod(Lint(k),Lint(d));
+        if (x==one||x==d_1) continue;
+        for(int j=1;j<s;++j){
+            x = (x*x)%Lint(d);
+            if (sgn==-1) {x = Lint(d)-x;sgn=1;}//that's an analogue of taking a module of negative number
+            if (x==one) return false;
+            if (x==d_1) break;
+        }
+        if (x!=d_1) return false;
+    }
+    return true;
 }
 
-bool SolovayStrassen::isPrime(vector<int> d) {
+bool SolovayStrassen::isPrime(vector<int> d, int iters) {
     return false;
 }
 

@@ -3,19 +3,19 @@
 using namespace std;
 
 class PrimalityTest{
-    virtual bool isPrime(vector<int>)=0;
+    virtual bool isPrime(vector<int>, int)=0;
 };
 
 class Fermat: public PrimalityTest{
-    bool isPrime(vector<int>) override;
+    bool isPrime(vector<int>, int) override;
 };
 
 class MillerRabin: public PrimalityTest{
-    bool isPrime(vector<int>) override;
+    bool isPrime(vector<int>,int) override;
 };
 
 class SolovayStrassen: public PrimalityTest{
-    bool isPrime(vector<int>) override;
+    bool isPrime(vector<int>,int) override;
 };
 
 
@@ -69,7 +69,7 @@ public:
     Lint powmod(Lint pow, Lint mod);
     static Lint generate_random(Lint max);
 
-    bool primeCheck();
+    bool primeCheck(int iters=1);
 
     friend ostream& operator<<(ostream &out, Lint num);
     friend istream& operator>>(istream &in, Lint& num);

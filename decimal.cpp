@@ -50,7 +50,7 @@ bool Decimal::operator==(Decimal other) {
 
 Decimal Decimal:: operator*(Decimal other){
     Decimal res;
-    res.digits = fft_mul(digits,other.digits);
+    res.digits = digits*other.digits;
     carry_res(res.digits);
     trim(res.digits);
     res.exp = exp+other.exp;
@@ -67,7 +67,6 @@ Decimal Decimal:: inverse(){
         carry_res(guess.digits);
         trim(guess.digits);
         guess.exp = guess.exp*2;
-
         while(guess.digits.size()>128){//optimization because length of number is growing exponentially
             guess.digits.erase(guess.digits.begin());
             guess.exp++;
