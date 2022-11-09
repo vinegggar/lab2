@@ -2,18 +2,19 @@
 #include "vecArithmetic.h"
 using namespace std;
 
-class DecimalException: public exception{
+class DecimalException : public exception {
 public:
-    const char* what() const throw();
+    const char *what() const throw();
 };
 
-class Decimal{
+class Decimal {
 private:
-    vector <int> digits;
+    vector<int> digits;
     int exp;
+
 public:
-    Decimal()= default;
-    Decimal(vector<int> d, int e=0);
+    Decimal() = default;
+    Decimal(vector<int> d, int e = 0);
     ~Decimal();
     bool operator==(Decimal other);
     Decimal operator*(Decimal other);
@@ -21,5 +22,5 @@ public:
     Decimal operator/(Decimal other);
     vector<int> getDigits();
     Decimal floor();
-    friend ostream& operator<<(ostream &out, Decimal num);
+    friend ostream &operator<<(ostream &out, Decimal num);
 };
