@@ -44,13 +44,14 @@ private:
     vector <int> digits;
     static Mult* multer;
     static PrimalityTest* tester;
+    static Lint linGen(Lint x, Lint min, Lint max);
 public:
     Lint();
     Lint(string val);
     Lint(vector<int> d);
     ~Lint();
     Lint& operator =(const Lint& other);
-    bool operator ==(Lint& other);
+    bool operator ==(Lint other);
     bool operator !=(Lint other);
     bool operator >(Lint& other);
     bool operator <=(Lint& other);
@@ -60,16 +61,19 @@ public:
     static void setMultMode(Mult *newMulter);
     static void setTestMode(PrimalityTest *newTester);
 
-    Lint operator +(Lint &other);
+    Lint operator +(Lint other);
     Lint operator -(Lint other);
     Lint operator *(Lint other);
-    void get_inv();
+    void getInv();
     Lint operator /(Lint other);
     Lint operator %(Lint other);
-    Lint powmod(Lint pow, Lint mod);
-    static Lint generate_random(Lint max);
+    static Lint setRandLint(int n);
+    static Lint genRandLint(Lint min, Lint max);
+    Lint powMod(Lint pow, Lint mod);
+    Lint gcd(Lint other);
+    int jacobi(Lint other);
 
-    bool primeCheck(int iters=1);
+    bool isPrime(int iters=1);
 
     friend ostream& operator<<(ostream &out, Lint num);
     friend istream& operator>>(istream &in, Lint& num);

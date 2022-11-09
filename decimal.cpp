@@ -58,15 +58,18 @@ Decimal Decimal:: operator*(Decimal other){
 }
 
 Decimal Decimal:: inverse(){
-    if (digits==vector<int>(1)){
+    if (digits == vector<int> {0}){
         throw DecimalException();
     }
     Decimal guess({1},-digits.size());
+
     for(int i=0;i<12;++i){
-        guess.digits = guess.digits*(add_zeroes({2},-guess.exp)- digits*guess.digits);
+        guess.digits = guess.digits*(toPow10({2},-guess.exp)- digits*guess.digits);
         carry_res(guess.digits);
         trim(guess.digits);
-        guess.exp = guess.exp*2;
+
+        guess.exp = guess.exp *2;
+
         while(guess.digits.size()>128){//optimization because length of number is growing exponentially
             guess.digits.erase(guess.digits.begin());
             guess.exp++;
@@ -83,16 +86,18 @@ Decimal Decimal:: floor(){
     carry_res(digits);
     Decimal res;
     vector<int> decimal;
+
     for(int i=-exp-1;i>=-exp-12;--i){
         decimal.push_back(digits[i]);
     }
+
     while (exp < 0) {
         digits.erase(digits.begin());
         exp++;
     }
+
     res.digits = decimal==vector<int>(12,9)? digits+vector<int>{1}: digits;
-    carry_res(res.digits);
-    trim(res.digits);
+
     res.exp = exp;
     return res;
 }
@@ -105,8 +110,6 @@ Decimal Decimal:: operator/(Decimal other){
     else if(digits==other.digits){return Decimal({1});}
     else {
         res.digits = digits*other.inverse().digits;
-        carry_res(res.digits);
-        trim(res.digits);
         res.exp = exp + other.inverse().exp;
         return res.floor();
     }

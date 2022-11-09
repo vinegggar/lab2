@@ -70,6 +70,7 @@ private:
     vector <int> digits;
     static Mult* multer;
     static PrimalityTest* tester;
+    static Lint linGen(Lint x, Lint min, Lint max);
 public:
     Lint()= default;
     Lint(string val){
@@ -83,7 +84,7 @@ public:
     ~Lint(){digits.clear();}
 
     Lint& operator =(const Lint& other);
-    bool operator==(Lint& other);
+    bool operator==(Lint other);
     bool operator !=(Lint other);
     bool operator>(Lint& other);
     bool operator <=(Lint& other);
@@ -93,16 +94,19 @@ public:
     static void setMultMode(Mult *newMulter);
     static void setTestMode(PrimalityTest *newTester);
 
-    Lint operator+(Lint& other);
+    Lint operator+(Lint other);
     Lint operator-(Lint other);
     Lint operator *(Lint other);
-    void get_inv();
+    void getInv();
     Lint operator /(Lint other);
     Lint operator %(Lint other);
-    static Lint generate_random(Lint max);
-    Lint powmod(Lint pow, Lint mod);
+    static Lint setRandLint(int n);
+    static Lint genRandLint(Lint min, Lint max);
+    Lint powMod(Lint pow, Lint mod);
+    Lint gcd(Lint other);
+    int jacobi(Lint other);
 
-    bool primeCheck(int iters=1);
+    bool isPrime(int iters=1);
 
     friend ostream& operator<<(ostream &out, Lint num);
     friend istream& operator>>(istream &in, Lint& num);
@@ -120,7 +124,7 @@ public:
 /*
  * comparison operators
  */
-bool Lint:: operator==(Lint& other) {trim(digits);trim(other.digits);return digits==other.digits;}
+bool Lint:: operator==(Lint other) {trim(digits);trim(other.digits);return digits==other.digits;}
 
 bool Lint::operator!=(Lint other){return !(*this==other);}
 
@@ -136,7 +140,7 @@ bool Lint:: operator>=(Lint other) {return !(*this<other);}
  * arithmetic operators
  */
 
-Lint Lint::operator+(Lint& other){
+Lint Lint::operator+(Lint other){
     Lint res;
     res.digits = digits+other.digits;
     carry_res(res.digits);
@@ -163,7 +167,7 @@ Lint Lint::operator*(Lint other){
     return res;
 }
 
-void Lint::get_inv() {
+void Lint::getInv() {
     cout<<Decimal(digits).inverse();
 }
 
@@ -177,11 +181,15 @@ Lint Lint::operator%(Lint other) {
     Lint res;
     if (other.digits==vector<int>{1} or digits==other.digits)return Lint("0");
     if (*this<other) return *this;
-    return *this - (other*(*this/other));
+    res = *this - (other*(*this/other));
+    if (sgn == -1){
+        return other-res;
+    }
+    return res;
 }
 
 
-Lint Lint:: powmod(Lint pow, Lint mod) {
+Lint Lint:: powMod(Lint pow, Lint mod) {
     Lint res("1");
     Lint base = *this;
     vector<int> e = to_binary(pow.digits);
@@ -193,44 +201,52 @@ Lint Lint:: powmod(Lint pow, Lint mod) {
     }
     return res;
 }
-
+Lint Lint:: gcd(Lint other){
+    Lint res = *this;
+    while (other != Lint("0")){
+        res = res%other;
+        if (res == Lint("0")) return other;
+        other = other%res;
+    }
+    return res;
+}
 /*
  * random number generator
  */
-Lint Lint:: generate_random(Lint max) {
-    srand(time(nullptr));
-    Lint res;
-    int len = rand()%max.digits.size()+1;
-    if (len==1)res.digits.push_back(rand()%7+3);//to guarantee that number is more than 2;
-    else if (len!=max.digits.size()){
-        for(int i=0;i<len-1;++i) res.digits.push_back(rand() % 10);
-        res.digits.push_back(rand()%9+1);
-    }
-    else if (len==max.digits.size()){
-        res.digits.push_back(rand()%10);
-        for(int i=1;i<len-1;++i){
-            if (res.digits[i-1]>max.digits[i-1]) res.digits.push_back(max.digits[i]!=0?rand()%max.digits[i]:0);
-            else res.digits.push_back(rand()%10);
-        }
-        res.digits.push_back(rand()%(max.digits.back()+1));
-    }
-    return res;
+Lint x_prev;
+
+Lint Lint::setRandLint(int n) {
+    vector<int> num = {n};
+    x_prev = Lint(num);
+    return x_prev;
+}
+
+Lint Lint:: linGen(Lint x,Lint min, Lint max) {
+    Lint a("37"), c("71");
+    return (a*x+c)%(max-min+Lint("1"))+min;
+}
+
+Lint Lint:: genRandLint(Lint min, Lint max){
+    x_prev = linGen(x_prev,min,max);
+    return x_prev;
 }
 
 /*
  * primality test
  */
-bool Lint::primeCheck(int iters) {
+bool Lint::isPrime(int iters) {
     return tester->isPrime(digits,iters);
 }
+
 
 bool Fermat::isPrime(vector<int> d, int iters) {
     if (d==vector<int>{1}) return false;
     else if (d==vector<int>{2}) return true;
+    x_prev = Lint::setRandLint(time(nullptr)%107);
     for(int i=0;i<iters;++i) {
-        Lint rd = Lint::generate_random(Lint(d)-Lint("1"));
-        auto pm = rd.powmod(Lint(d) - Lint("1"), Lint(d));
-        if (pm != Lint("1")) return false;
+        Lint rand = Lint::genRandLint(Lint("2"),Lint(d)-Lint("1"));
+        Lint randPowMod = rand.powMod(Lint(d) - Lint("1"), Lint(d));
+        if (randPowMod != Lint("1")) return false;
     }
     return true;
 }
@@ -238,18 +254,17 @@ bool Fermat::isPrime(vector<int> d, int iters) {
 bool MillerRabin::isPrime(vector<int> d, int iters) {
     if (d==vector<int>{1}) return false;
     else if (d==vector<int>{2}||d==vector<int>{3}) return true;
-
     int s = factorize(d)[0][0];
     vector<int> k = factorize(d)[1];
     Lint one = Lint("1");
     Lint d_1 = Lint(d)-one;
+    x_prev = Lint::setRandLint(time(nullptr)%107);
     for(int i=0;i<iters;++i){
-        Lint rd = Lint::generate_random(d_1);
-        Lint x = rd.powmod(Lint(k),Lint(d));
+        Lint rand = Lint::genRandLint(Lint("2"),d_1);
+        Lint x = rand.powMod(Lint(k),Lint(d));
         if (x==one||x==d_1) continue;
         for(int j=1;j<s;++j){
             x = (x*x)%Lint(d);
-            if (sgn==-1) {x = Lint(d)-x;sgn=1;}//that's an analogue of taking a module of negative number
             if (x==one) return false;
             if (x==d_1) break;
         }
@@ -258,8 +273,52 @@ bool MillerRabin::isPrime(vector<int> d, int iters) {
     return true;
 }
 
+int Lint::jacobi(Lint other) {
+    if (other.digits[0]%2==0){
+        throw invalid_argument("second argument must be odd");
+    }
+    Lint a = *this;
+    Lint b = other;
+    a = a % b;
+    int t = 1;
+    Lint r;
+    while (a!=Lint("0")){
+        while (a.digits[0]%2==0){
+            a = a/Lint("2");
+            r = b%Lint("8");
+            if (r==Lint("3")||r==Lint("5")) t = -t;
+        }
+        r = b;
+        b = a;
+        a = r;
+        if (a%Lint("4")==Lint("3") && b%Lint("4")==Lint("3")) t = -t;
+        a = a%b;
+    }
+    if (b==Lint("1")) return t;
+    else return 0;
+}
+
 bool SolovayStrassen::isPrime(vector<int> d, int iters) {
-    return false;
+    if (d == vector<int>{2}) return true;
+    if (d[0]%2==0) return false;
+    x_prev = Lint::setRandLint(abs(time(nullptr)%107));
+    for (int i=0;i<iters;++i){
+        Lint rand = Lint::genRandLint(Lint("2"),Lint(d)-Lint("1"));
+
+        if (rand.gcd(Lint(d))!=Lint("1")) return false;
+
+        Lint j = rand.powMod((Lint(d)-Lint("1"))/Lint("2"),Lint(d));
+        int jacobi = rand.jacobi(Lint(d));
+
+        if (jacobi == 1){
+            if (sgn == -1){
+                if (j!=Lint(d)-Lint("1")) return false;
+            }
+            else if (j!=Lint("1")) return false;
+        }
+        else if (j!=Lint(d)-Lint("1")) return false;
+    }
+    return true;
 }
 
 /*

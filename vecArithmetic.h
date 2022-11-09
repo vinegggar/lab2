@@ -17,7 +17,7 @@ vector<int> fft_mul(vector<int>d1, vector<int>d2);
 void trim(vector<int>&d);
 vector<int> divn(vector<int>d1, int n);
 vector<int> toom_cook_mul(vector<int>d1, vector<int>d2);
-vector<int> add_zeroes(vector<int>d, int n);
+vector<int> toPow10(vector<int>d, int n);
 bool operator>(vector<int> &d1, vector<int>&d2);
 vector<int> to_binary(vector<int>d);
 vector<vector<int>> factorize(vector<int>n);

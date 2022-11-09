@@ -1,6 +1,5 @@
 #include<vector>
 #include<complex>
-#include <iostream>
 
 using namespace std;
 
@@ -15,10 +14,6 @@ vector<int> operator*(vector<int>d1,vector<int>d2){
 }
 
 void carry_res(vector<int>&res){
-    if (res.size()==0){
-        cout<<"Error: empty vector"<<endl;
-        return;
-    }
     for (int i = 0; i < res.size()-1; ++i) {
         res[i+1]+=res[i]>=0? res[i]/10: -((-res[i]+9)/10);
         res[i] = res[i]>=0? res[i]%10: (res[i]%10==0? 0: 10-(-res[i]%10));
@@ -211,7 +206,7 @@ vector<int> toom_cook_mul(vector<int>d1, vector<int>d2){
     return res;
 }
 
-vector<int> add_zeroes(vector<int>d, int n){ //this function is basically raising to power of 10
+vector<int> toPow10(vector<int>d, int n){ //this function is basically raising to power of 10
     for(int i=0;i<n;++i) d.insert(d.begin(),0);
     return d;
 }
@@ -237,20 +232,16 @@ vector<int> to_binary(vector<int>d){
     return res;
 }
 
-/*
- * this function is needed to use miller_rabin primality test
- */
 vector<vector<int>> factorize(vector<int>n){
-    vector<int> s(n);
+    vector<int> s(1);
     vector<int> k;
     vector<int> n_1 = n - vector<int>{1};
     carry_res(n_1);
     trim(n_1);
     while (n_1[0]%2==0){
-        s[0]+=1;//we can do it because the biggest number
+        s[0]+=1;
         n_1 = divn(n_1, 2);
     }
     k = n_1;
     return {s, k};
 }
-
