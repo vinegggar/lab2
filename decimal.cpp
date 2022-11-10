@@ -53,7 +53,7 @@ Decimal Decimal::operator*(Decimal other) {
     res.exp = exp + other.exp;
     return res;
 }
-
+//xn+1=xn(2-a*x),
 Decimal Decimal::inverse() {
     if (digits == vector<int>{0}) {
         throw DecimalException();

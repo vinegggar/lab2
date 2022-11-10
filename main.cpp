@@ -5,14 +5,19 @@ using namespace std;
 
 
 int main() {
-    Lint A("6957596529882152968992225251835887181478451547013"),
-    B("11"), C("33790411487878798256071"), D("341");
+    Lint A("25835"),
+    B("351488"), C("33790411487878798256071"), D("341");
+    Lint::setMultMode(new NaiveMult);
+    Lint G=A*B;
+    cout<<A*B;
     Lint::setMultMode(new Karatsuba);
-    cout << A*B << endl;
+    cout<<A*B;
     Lint::setMultMode(new SchonhageStrassen);
-    cout << A*B << endl;
+    Lint H = A*B;
     Lint::setMultMode(new ToomCook);
-    cout << A*B << endl;
+    Lint L = A*B;
+
+    cout<<(G-H)<<" "<<(G-L)<<" "<<(H-L);
     Lint::setMultMode(new NaiveMult);
     cout<<A*B<<endl;
     cout<<A/C<<endl;

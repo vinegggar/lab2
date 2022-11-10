@@ -77,7 +77,7 @@ public:
             digits.push_back(val[i] - '0');
         }
     }
-    Lint(vector<int> d) { digits = d; }
+    Lint(vector<int> d) { carry_res(d);trim(d);digits=d;}
     ~Lint() { digits.clear(); }
 
     Lint &operator=(const Lint &other);

@@ -63,7 +63,7 @@ vector<int> karatsuba_mul(vector<int> d1, vector<int> d2) {
         d1.size() > d2.size() ? d2.push_back(0) : d1.push_back(0);
     }
 
-    vector<int> res(2 * d1.size() - 1);
+    vector<int> res(2 * d1.size()-1);
 
     int half = d1.size() / 2;
 

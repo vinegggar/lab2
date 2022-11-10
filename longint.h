@@ -61,7 +61,7 @@ public:
     static void setMultMode(Mult *newMulter);
     static void setTestMode(PrimalityTest *newTester);
 
-    Lint operator+(Lint other);
+    Lint operator+(const Lint& other)const;
     Lint operator-(Lint other);
     Lint operator*(Lint other);
     void getInv();
